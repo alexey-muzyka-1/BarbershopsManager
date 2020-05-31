@@ -1,0 +1,64 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Barbershops{% endblock %}
+
+{% block breadcrumbs %}
+    <ol class="breadcrumb">
+        <li class="breadcrumb-item"><a href="{{ path('home') }}">Home</a></li>
+        <li class="breadcrumb-item"><a href="{{ path('barbershop_info.barbershops') }}">Barbershops</a></li>
+        <li class="breadcrumb-item active">{{ barbershop.name }}</li>
+    </ol>
+{% endblock %}
+
+{% block body %}
+
+    {% if is_granted("ROLE_MANAGE_BARBERSHOP_BARBERSHOP") %}
+        <div class="controls">
+            <a href="{{ path('barbershop_info.barbershops.edit', {'id': barbershop.id}) }}" class="btn btn-primary">Edit</a>
+            <a href="{{ path('barbershop_info.barbershops.move', {'id': barbershop.id}) }}" class="btn btn-primary">Move</a>
+            {% if barbershop.active and barbershop.id.value != app.user.id %}
+                <form action="{{ path('barbershop_info.barbershops.archive', {'id': barbershop.id}) }}" method="post" onsubmit="return confirm('Are you sure?')">
+                    <input type="hidden" name="token" value="{{ csrf_token('archive') }}" />
+                    <button type="submit" class="btn btn-danger">Archive</button>
+                </form>
+            {% endif %}
+            {% if barbershop.archived %}
+                <form action="{{ path('barbershop_info.barbershops.activate', {'id': barbershop.id}) }}" method="post" onsubmit="return confirm('Are you sure?')">
+                    <input type="hidden" name="token" value="{{ csrf_token('reinstate') }}" />
+                    <button type="submit" class="btn btn-success">Reinstate</button>
+                </form>
+            {% endif %}
+            <form action="{{  path('barbershop_info.barbershops.remove', {'id': barbershop.id}) }}" method="post" onsubmit="return confirm('Are you sure?')">
+                <input type="hidden" name="token" value="{{ csrf_token('remove') }}" />
+                <button type="submit" class="btn  btn-danger"><span class="fa fa-trash"></span></button>
+            </form>
+        </div>
+    {% endif %}
+
+    <div class="box">
+        <table class="table table-bordered">
+            <tbody>
+                <tr>
+                    <th>Name</th>
+                    <td>{{ barbershop.name }}</td>
+                </tr>
+                <tr>
+                    <th>Adress</th>
+                    <td>{{ barbershop.fullAdress }}</td>
+                </tr>
+                <tr>
+                    <th>Company</th>
+                    <td>{{barbershop.company.name }}</td>
+                </tr>
+                <tr>
+                    <th>About</th>
+                    <td>{{ barbershop.about }}</td>
+                </tr>
+                <tr>
+                    <th>Status</th>
+                    <td>{{ barbershop_status(barbershop.status) }}</td>
+                </tr>
+            </tbody>
+        </table>
+    </div>
+{% endblock %}

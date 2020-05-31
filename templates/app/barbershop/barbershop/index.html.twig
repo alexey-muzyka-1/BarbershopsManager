@@ -1,0 +1,67 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Barbershops{% endblock %}
+
+{% block breadcrumbs %}
+    <ol class="breadcrumb">
+        <li class="breadcrumb-item"><a href="{{ path('home') }}">Home</a></li>
+        <li class="breadcrumb-item active">Barbershops</li>
+    </ol>
+{% endblock %}
+
+{% block body %}
+
+    {% if is_granted("ROLE_MANAGE_BARBERSHOP_BARBERSHOP") %}
+        <div class="controls">
+            <a href="{{ path('barbershop_info.barbershops.create') }}" class="btn btn-success">Add Barbershop</a>
+        </div>
+    {% endif %}
+
+    <div class="card">
+        <div class="card-body">
+
+            {{ form_start(form) }}
+            <div class="row">
+                <div class="col-md-2">{{ form_widget(form.name) }}</div>
+                <div class="col-md-2">{{ form_widget(form.adress) }}</div>
+                <div class="col-md-2">{{ form_widget(form.companyName) }}</div>
+                <div class="col-md-2">{{ form_widget(form.status) }}</div>
+                <div class="col-md-1">{{ form_widget(form.perPage) }}</div>
+                <div class="col-md-2">
+                    <button type="submit" class="btn btn-primary">Filter</button>
+                    <a href="{{ path('barbershop_info.barbershops') }}" class="btn btn-outline-secondary">Reset</a>
+                </div>
+            </div>
+            {{ form_end(form) }}
+
+        </div>
+    </div>
+
+    <div class="box">
+        <table class="table table-bordered table-hover">
+            <thead>
+            <tr>
+                <th>{{ knp_pagination_sortable(pagination, 'Name', 'name') }}</th>
+                <th>{{ knp_pagination_sortable(pagination, 'Adress', 'adress') }}</th>
+                <th>{{ knp_pagination_sortable(pagination, 'Company', 'companyname') }}</th>
+                <th>{{ knp_pagination_sortable(pagination, 'Status', 'status') }}</th>
+            </tr>
+            </thead>
+            <tbody>
+            {% for barbershop in pagination %}
+                <tr>
+                    <td><a href="{{ path('barbershop_info.barbershops.show', {'id': barbershop.id}) }}">{{ barbershop.name }}</a></td>
+                    <td>{{ barbershop.adress }}</td>
+                    <td>{{ barbershop.companyname }}</td>
+                    <td>{{ barbershop_status(barbershop.status) }}</td>
+                </tr>
+            {% endfor %}
+            </tbody>
+        </table>
+    </div>
+
+    <div class="navigation">
+        {{ knp_pagination_render(pagination) }}
+    </div>
+
+{% endblock %}

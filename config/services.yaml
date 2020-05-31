@@ -1,0 +1,39 @@
+parameters:
+    locale: 'en'
+
+services:
+
+    _defaults:
+        autowire: true
+        autoconfigure: true
+
+    App\:
+        resource: '../src/*'
+        exclude: '../src/{DependencyInjection,Model/User/Entity,Model/Work/Entity,Migrations,Tests,Kernel.php}'
+
+    App\Model\User\Entity\User\UserRepository: ~
+    App\Model\Barbershop\Entity\Company\CompanyRepository: ~
+    App\Model\Barbershop\Entity\Barbershop\BarbershopRepository: ~
+
+    App\Controller\:
+        resource: '../src/Controller'
+        tags: ['controller.service_arguments']
+
+    Finesse\SwiftMailerDefaultsPlugin\SwiftMailerDefaultsPlugin:
+        arguments:
+            $defaults:
+                from:
+                    '%env(MAILER_FROM_EMAIL)%': '%env(MAILER_FROM_NAME)%'
+        tags:
+            - { name: swiftmailer.default.plugin }
+
+    App\Model\User\Service\ResetTokenizer:
+        factory: ['App\Container\Model\User\Service\ResetTokenizerFactory', 'create']
+        arguments: ['PT1H']
+
+    App\Twig\Widget\:
+        resource: '../src/Twig/Widget'
+        tags: ['twig.extension']
+
+    App\Twig\Menu\SidebarMenu:
+        tags: [{ name: knp_menu.menu_builder, method: build, alias: sidebar }]

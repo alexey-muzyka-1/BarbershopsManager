@@ -1,0 +1,26 @@
+doctrine:
+    dbal:
+        url: '%env(resolve:DATABASE_URL)%'
+        types:
+            user_id: 'App\Model\User\Entity\User\DoctrineType\IdType'
+            user_email: 'App\Model\User\Entity\User\DoctrineType\EmailType'
+            user_role: 'App\Model\User\Entity\User\DoctrineType\RoleType'
+            barbershop_id: 'App\Model\Barbershop\Entity\Barbershop\DoctrineType\IdType'
+            barbershop_company_id: 'App\Model\Barbershop\Entity\Company\DoctrineType\IdType'
+    orm:
+        auto_generate_proxy_classes: true
+        naming_strategy: doctrine.orm.naming_strategy.underscore_number_aware
+        auto_mapping: true
+        mappings:
+            User:
+                is_bundle: false
+                type: annotation
+                dir: '%kernel.project_dir%/src/Model/User/Entity'
+                prefix: 'App\Model\User\Entity'
+                alias: User
+            Barbershop:
+                is_bundle: false
+                type: annotation
+                dir: '%kernel.project_dir%/src/Model/Barbershop/Entity'
+                prefix: 'App\Model\Barbershop\Entity'
+                alias: Barbershop

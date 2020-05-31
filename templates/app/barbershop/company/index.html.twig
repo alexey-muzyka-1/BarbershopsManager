@@ -1,0 +1,62 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Companies{% endblock %}
+
+{% block breadcrumbs %}
+    <ol class="breadcrumb">
+        <li class="breadcrumb-item"><a href="{{ path('home') }}">Home</a></li>
+        <li class="breadcrumb-item active">Companies</li>
+    </ol>
+{% endblock %}
+
+{% block body %}
+
+    {% if is_granted("ROLE_MANAGE_BARBERSHOP_COMPANIES") %}
+        <div class="controls">
+            <a href="{{ path('barbershop_info.companies.create') }}" class="btn btn-success">Add Company</a>
+        </div>
+    {% endif %}
+
+    <div class="box">
+        <table class="table table-bordered table-hover">
+            <thead>
+            <tr>
+                <th>Name</th>
+                <th>Owner</th>
+                <th>Members</th>
+                {% if is_granted("ROLE_MANAGE_BARBERSHOP_COMPANIES") %}
+                    <th></th>
+                {%  endif %}
+            </tr>
+            </thead>
+            <tbody>
+            {% set token = csrf_token('delete') %}
+            {% for company in companies %}
+                <tr>
+                    <td>
+                        {% if company.barbershops %}
+                            <a href="{{ path('barbershop_info.barbershops', {'form': {'companyName': company.id}}) }}">{{ company.name }}</a>
+                        {% else %}
+                            {{ company.name }}
+                        {% endif %}
+                    </td>
+                    <td>{{ company.owner }}</td>
+                    <td>{{ company.barbershops }}</td>
+                    {% if is_granted("ROLE_MANAGE_BARBERSHOP_COMPANIES") %}
+                        <td>
+                            <div class="d-flex flex-row">
+                                <a href="{{ path('barbershop_info.companies.edit', {'id': company.id}) }}" class="btn btn-sm btn-primary mr-1"><span class="fa fa-pencil"></span></a>
+                                <form action="{{ path('barbershop_info.companies.delete', {'id': company.id}) }}" method="post" onsubmit="return confirm('Are you sure?')">
+                                    <input type="hidden" name="token" value="{{ token }}" />
+                                    <button type="submit" class="btn btn-sm btn-danger"><span class="fa fa-trash"></span></button>
+                                </form>
+                            </div>
+                        </td>
+                    {% endif %}
+                </tr>
+            {% endfor %}
+            </tbody>
+        </table>
+    </div>
+
+{% endblock %}
